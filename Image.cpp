@@ -87,6 +87,23 @@ namespace BRMALA003
 		return imageA.getImagePtr();
 		
 	}
+	//Makes a threshold mask image
+	unique_ptr<unsigned char[]>& threshImage(string file1, int w1, int h1, int threshold)
+	{
+		Image threshImage = Image(file1,w1,h1);
+		for (int i=0;i<h1;++i)
+		{
+			if (threshImage.getImagePtr().get()[i] > threshold)
+			{
+				threshImage.getImagePtr().get()[i] = 255;
+			}
+			else
+			{
+				threshImage.getImagePtr().get()[i] = 0;
+			}
+		}
+		return threshImage.getImagePtr();
+	}
 	//Copy Constructor
 	Image::Image(const Image & rhs)
 	{
