@@ -17,9 +17,11 @@ namespace BRMALA003
 		unique_ptr<unsigned char[]> image_ptr;
 		
 		public:
-		Image();
+		Image(string filename, int w, int h);
 		~Image() = default;
 		unique_ptr<unsigned char[]>& getImagePtr();
+		void constructImage(string filename, int rows, int columns);
+		unique_ptr<unsigned char[]>& addImages(string file1, int w1, int h1, string file2, int w2, int h2);
 		//Copy Constructor
 		Image(const Image & rhs);
 		//Move Constructor

@@ -9,15 +9,16 @@
 #include <fstream>
 #include <sstream>
 //Creates a unique_ptr to a PNG image
+//and supports various operations on the images
 namespace BRMALA003
 {
 	using namespace std;
 	//Constructor
-	Image::Image(int w, int h)
+	Image::Image(string filename, int w, int h)
 	{
 		width=w;
 		height=h;
-		image_ptr=NULL;
+		constructImage(filename,w,h);
 	}
 	//Image_ptr accessor	
 	unique_ptr<unsigned char[]>& Image::getImagePtr()
@@ -26,22 +27,61 @@ namespace BRMALA003
 	}
 	void Image::constructImage(string filename, int rows, int columns)
 	{
-		ifstream img(filename).c_str(), ios::in|ios::binary);
-		for (int i=0;i<columns;++i)
-		{
-			unique_ptr<unsigned char[]> image_row = new unsigned char[rows];
-			img.read((char*)image_row, rows);
-			image_ptr[i]=image_row;
-		}
-		
+		ifstream img(filename.c_str(), ios::in|ios::binary);
+		unique_ptr<unsigned char[]> image(new unsigned char[rows*columns]); 
+		img.read((char *)image.get(), rows*columns);
+		image_ptr = move(image);
 	}
+	
+	unique_ptr<unsigned char[]>& Image::addImages(string file1, int w1, int h1,string file2, int w2, int h2)
+	{
+		Image imageA = Image(file1,w1,h1);
+		Image imageB = Image(file2,w2,h2);
+		for (int i=0;i<h1;++i)
+		{
+			imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] + imageB.getImagePtr().get()[i];
+		}
+		return imageB.getImagePtr();
+	}
+	
 	//Copy Constructor
-	//Image(const Image & rhs);
+	Image::Image(const Image & rhs)
+	{
+		width=rhs.width;
+		height=rhs.height;
+		//image_ptr=rhs.image_ptr;
+	}
 	//Move Constructor
-	//Image(Image && rhs);
+	Image::Image(Image && rhs)
+	{
+		width=rhs.width;
+		height=rhs.height;
+		image_ptr=move(rhs.image_ptr);
+	}
 	//Copy and Move Assignment Operators
-	//Image & operator=(const Image & rhs); 
-	//Image & operator=(Image && rhs);
+	Image & Image::operator=(const Image & rhs)
+	{
+		if(this != &rhs) 
+		{
+			width=rhs.width;
+			height=rhs.height;
+			//image_ptr=rhs.getImagePtr();
+		}
+		return *this;
+	}
+	Image & Image::operator=(Image && rhs)
+	{
+		if(this != &rhs) 
+		{
+			width=rhs.width;
+			height=rhs.height;
+			//image_ptr=rhs.image_ptr;
+			rhs.width=-1;
+			rhs.height=-1;
+			rhs.getImagePtr()=NULL;
+		}
+		return *this;
+	}
 	
 	
 }
