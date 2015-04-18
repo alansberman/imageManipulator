@@ -25,6 +25,7 @@ namespace BRMALA003
 	{
 		return image_ptr;
 	}
+	//Reads the PNG file and assigns image_ptr to it
 	void Image::constructImage(string filename, int rows, int columns)
 	{
 		ifstream img(filename.c_str(), ios::in|ios::binary);
@@ -32,7 +33,8 @@ namespace BRMALA003
 		img.read((char *)image.get(), rows*columns);
 		image_ptr = move(image);
 	}
-	
+	//Add method of 2 images which makes all the pixels in image 2 equal to
+	//the sum of the first image's and the second image's pixel at that location
 	unique_ptr<unsigned char[]>& Image::addImages(string file1, int w1, int h1,string file2, int w2, int h2)
 	{
 		Image imageA = Image(file1,w1,h1);
@@ -44,6 +46,47 @@ namespace BRMALA003
 		return imageB.getImagePtr();
 	}
 	
+	//Sum method of 2 images which makes all the pixels in image 2 equal to
+	//the difference between the first image's and the second image's pixel at that location
+	unique_ptr<unsigned char[]>& Image::subtractImages(string file1, int w1, int h1,string file2, int w2, int h2)
+	{
+		Image imageA = Image(file1,w1,h1);
+		Image imageB = Image(file2,w2,h2);
+		for (int i=0;i<h1;++i)
+		{
+			imageA.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] - imageB.getImagePtr().get()[i];
+		}
+		return imageA.getImagePtr();
+	}
+	//Inverts an image
+	unique_ptr<unsigned char[]>& Image::invertImage(string file1, int w1, int h1)
+	{
+		Image inverted = Image(file1,w1,h1);
+		for (int i=0;i<h1;++i)
+		{
+			inverted.getImagePtr().get()[i] = 255 - inverted.getImagePtr().get()[i];
+		}
+		return inverted.getImagePtr();
+	}
+	//Masks an image
+	unique_ptr<unsigned char[]>& maskImage(string file1, int w1, int h1, string file2, int w2, int h2)
+	{
+		Image imageA = Image(file1,w1,h1);
+		Image imageB = Image(file2,w2,h2);
+		for (int i=0;i<h1;++i)
+		{
+			if (imageB.getImagePtr().get()[i] == 255)
+			{
+				imageA.getImagePtr().get()[i] = imageB.getImagePtr().get()[i];
+			}
+			else
+			{
+				imageA.getImagePtr().get()[i] = 0;
+			}
+		}
+		return imageA.getImagePtr();
+		
+	}
 	//Copy Constructor
 	Image::Image(const Image & rhs)
 	{

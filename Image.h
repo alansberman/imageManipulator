@@ -22,6 +22,9 @@ namespace BRMALA003
 		unique_ptr<unsigned char[]>& getImagePtr();
 		void constructImage(string filename, int rows, int columns);
 		unique_ptr<unsigned char[]>& addImages(string file1, int w1, int h1, string file2, int w2, int h2);
+		unique_ptr<unsigned char[]>& subtractImages(string file1, int w1, int h1, string file2, int w2, int h2);
+		unique_ptr<unsigned char[]>& invertImage(string file1, int w1, int h1);
+		unique_ptr<unsigned char[]>& maskImage(string file1, int w1, int h1, string file2, int w2, int h2);
 		//Copy Constructor
 		Image(const Image & rhs);
 		//Move Constructor
