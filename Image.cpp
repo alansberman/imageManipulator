@@ -39,7 +39,7 @@ namespace BRMALA003
 	{
 		Image imageA = Image(file1,w1,h1);
 		Image imageB = Image(file2,w2,h2);
-		for (int i=0;i<h1;++i)
+		for (int i=0;i<(h1 * w1);++i)
 		{
 			imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] + imageB.getImagePtr().get()[i];
 		}
@@ -52,7 +52,7 @@ namespace BRMALA003
 	{
 		Image imageA = Image(file1,w1,h1);
 		Image imageB = Image(file2,w2,h2);
-		for (int i=0;i<h1;++i)
+		for (int i=0;i<(h1 * w1);++i)
 		{
 			imageA.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] - imageB.getImagePtr().get()[i];
 		}
@@ -62,7 +62,7 @@ namespace BRMALA003
 	unique_ptr<unsigned char[]>& Image::invertImage(string file1, int w1, int h1)
 	{
 		Image inverted = Image(file1,w1,h1);
-		for (int i=0;i<h1;++i)
+		for (int i=0;i<(h1 * w1);++i)
 		{
 			inverted.getImagePtr().get()[i] = 255 - inverted.getImagePtr().get()[i];
 		}
@@ -73,7 +73,7 @@ namespace BRMALA003
 	{
 		Image imageA = Image(file1,w1,h1);
 		Image imageB = Image(file2,w2,h2);
-		for (int i=0;i<h1;++i)
+		for (int i=0;i<(h1 * w1);++i)
 		{
 			if (imageB.getImagePtr().get()[i] == 255)
 			{
@@ -91,7 +91,7 @@ namespace BRMALA003
 	unique_ptr<unsigned char[]>& threshImage(string file1, int w1, int h1, int threshold)
 	{
 		Image threshImage = Image(file1,w1,h1);
-		for (int i=0;i<h1;++i)
+		for (int i=0;i<(h1 * w1);++i)
 		{
 			if (threshImage.getImagePtr().get()[i] > threshold)
 			{
