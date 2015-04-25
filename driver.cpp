@@ -19,7 +19,6 @@ int main(int argc, char * argv[])
 	{
 		//Identify the option chosen
 		s = string(argv[i]);
-		//cout << "loop start\n";
 		if 	(s=="-a")
 		{
 			i++;
@@ -32,10 +31,13 @@ int main(int argc, char * argv[])
 			//Extract the output file name from the args
 			outFile=string(argv[i]);
 			//add
+			cout << "Adding " << file_one << " to " << file_two << "..." << endl;
+			cout <<"Placing the result in " << outFile << "..." << endl;
 			BRMALA003::Image originalImage(file_one);
 			BRMALA003::Image imageToAdd(file_two);
 			originalImage + move(imageToAdd);
 			originalImage.saveImage(outFile);
+			cout << "Done!" << endl;
 			break;
 		}
 		if (s=="-s")
@@ -50,10 +52,13 @@ int main(int argc, char * argv[])
 			//Extract the output file name from the args
 			outFile=string(argv[i]);
 			//subtract
+			cout << "Subtracting " << file_one << " to " << file_two << "..." << endl;
+			cout <<"Placing the result in " << outFile << "..." << endl;
 			BRMALA003::Image originalImage(file_one);
-			BRMALA003::Image imageToAdd(file_two);
-			originalImage - move(imageToAdd);
+			BRMALA003::Image imageToSubtract(file_two);
+			originalImage - move(imageToSubtract);
 			originalImage.saveImage(outFile);
+			cout << "Done!" << endl;
 			break;
 		}
 		if (s=="-i")
@@ -65,8 +70,12 @@ int main(int argc, char * argv[])
 			//Extract the output file name from the args
 			outFile=string(argv[i]);
 			//invert
+			cout << "Inverting " << file_one << "..." << endl;
+			cout <<"Placing the result in " << outFile << "..." << endl;
 			BRMALA003::Image inverted_img(file_one);
-			inverted_img.invertImage(file_one);
+			!inverted_img;
+			inverted_img.saveImage(outFile);
+			cout << "Done!" << endl;
 			break;
 		}
 		if (s=="-l")
@@ -81,8 +90,12 @@ int main(int argc, char * argv[])
 			//Extract the output file name from the args
 			outFile=string(argv[i]);
 			//mask
-			BRMALA003::Image mask(file_one);
-			mask.maskImage(file_one,file_two);
+			cout << "Masking " << file_one << " with " << file_two << "..." << endl;
+			cout <<"Placing the result in " << outFile << "..." << endl;
+			BRMALA003::Image originalImage(file_one);
+			BRMALA003::Image mask_img(file_two);
+			originalImage/move(mask_img);
+			originalImage.saveImage(outFile);
 			break;
 		}
 		if (s=="-t")
@@ -99,8 +112,11 @@ int main(int argc, char * argv[])
 			//Extract the output file name from the args
 			outFile=string(argv[i]);
 			//threshold
+			cout << "Thresholding " << file_one << " with " << thresh << "..." << endl;
+			cout <<"Placing the result in " << outFile << "..." << endl;
 			BRMALA003::Image threshImg(file_one);
-			threshImg.threshImage(file_one, thresh_int);
+			threshImg*thresh_int;
+			threshImg.saveImage(outFile);
 			break;
 		}
 		

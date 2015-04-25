@@ -52,7 +52,6 @@ namespace BRMALA003
 			//Find the line containing the number of rows and columns
 			else if (line.length() > 3)
 			{
-				cout << line << endl;
 				istringstream ss(line);
 				ss >> width >> ws >> height;
 				//cout << width << " " << height << endl;
@@ -65,11 +64,9 @@ namespace BRMALA003
 				//cout << "got 255" << endl;
 			    istringstream ss_255(line);
 			    ss_255 >> ws;
-			    cout << line << endl;
 			    break;
 			}
 		}
-		cout << "hello!" << endl;
 		unique_ptr<unsigned char[]> image(new unsigned char[width*height]); 
 		img.read((char *)image.get(), width*height);
 		image_ptr = move(image);
@@ -221,7 +218,7 @@ namespace BRMALA003
 	{
 		 Image::iterator beg = this->begin(), end = this->end();
 		 Image::iterator inStart = rhs.begin(), inEnd = rhs.end();
-		 cout << "Yo" << endl;
+		 //Until the end of the unsigned char buffer is reached 
 		 while ( beg != end) 
 		 {
 			 //Clamp the value to 255
@@ -245,7 +242,7 @@ namespace BRMALA003
 	{
 		 Image::iterator beg = this->begin(), end = this->end();
 		 Image::iterator inStart = rhs.begin(), inEnd = rhs.end();
-
+		 //Until the end of the unsigned char buffer is reached
 		 while ( beg != end) 
 		 {
 			 //Clamp the value to 0
@@ -259,9 +256,19 @@ namespace BRMALA003
 			 {
 				*beg = *beg - *inStart; 
 				++beg; ++inStart;
-			 }
-			
-			  
+			 }		  
+		 } 
+		 return *this;
+	}
+	
+	Image & Image::operator!(void)
+	{
+		 Image::iterator beg = this->begin(), end = this->end();
+		 //Until the end of the unsigned char buffer is reached
+		 while ( beg != end) 
+		 {			 
+			*beg = 255 - *beg; 
+			++beg;			 		  
 		 } 
 		 return *this;
 	}
