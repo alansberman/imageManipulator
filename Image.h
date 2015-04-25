@@ -30,17 +30,55 @@ namespace BRMALA003
 			//copy construct is public
 			iterator( const iterator & rhs) : ptr(rhs.ptr) {}
 			// define overloaded ops: *, ++, --, =
-			iterator & operator=(const iterator & rhs);
-			iterator & operator*(const iterator & rhs);
-			iterator & operator++(const iterator & rhs);
-			iterator & operator--(const iterator & rhs);
+			iterator & operator=(const iterator & rhs)
+			{
+				if(this != &rhs) 
+				{
+					ptr=rhs.ptr;					
+				}
+				return *this;
+			}
+			u_char & operator*(const iterator & rhs)
+			{
+				return *ptr;
+			}
+			iterator & operator++(void)
+			{
+				++ptr;
+				return *this;
+			}
+			iterator & operator++(int a)
+			{
+				iterator temp = *this;
+				operator++();
+				return temp;
+			}
+			iterator & operator--(void)
+			{
+				--ptr;
+				return *this;
+			}	
+			iterator & operator--(int a)
+			{
+				iterator temp = *this;
+				operator--();
+				return temp;
+			}
+			boolean & operator!=(const iterator &rhs)
+			{
+				if (this->ptr == rhs->ptr)
+				{
+				return true;
+				}
+				return false;
+			}
 			
 		
 		};
- // define begin()/end() to get iterator to start and
- // "one-past" end.
-		iterator begin(void); 
-		
+		//begin
+		iterator begin(void) { return iterator(image_ptr.get());}
+		//end
+		iterator end(void) { return iterator(image_ptr.get()+(width*height));}
 		Image(string filename);
 		~Image() = default;
 		unique_ptr<unsigned char[]>& getImagePtr();

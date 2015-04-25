@@ -210,5 +210,54 @@ namespace BRMALA003
 		return *this;
 	}
 	
+	Image & Image::operator+(Image && rhs)
+	{
+		 Image::iterator beg = this->begin(), end = this->end();
+		 Image::iterator inStart = rhs.begin(), inEnd = rhs.end();
+
+		 while ( beg != end) 
+		 {
+			 //imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] & imageB.getImagePtr().get()[i];
+			 if (*beg == 255 || *inStart == 255)
+			 {
+				*beg = 255; 
+				++beg; ++inStart;
+			 }
+			 else
+			 {
+				*beg = *beg + *inStart; 
+				++beg; ++inStart;
+			 }
+			
+			  
+		 } 
+		 return *this;
+	}
+	Image & Image::operator-(Image && rhs)
+	{
+		 Image::iterator beg = this->begin(), end = this->end();
+		 Image::iterator inStart = rhs.begin(), inEnd = rhs.end();
+
+		 while ( beg != end) 
+		 {
+			 //imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] & imageB.getImagePtr().get()[i];
+			 if (*beg == 0 || *inStart == 0)
+			 {
+				*beg = 0; 
+				++beg; ++inStart;
+			 }
+			 else
+			 {
+				*beg = *beg - *inStart; 
+				++beg; ++inStart;
+			 }
+			
+			  
+		 } 
+		 return *this;
+	}
+	
+	
+	
 	
 }
