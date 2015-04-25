@@ -96,6 +96,7 @@ int main(int argc, char * argv[])
 			BRMALA003::Image mask_img(file_two);
 			originalImage/move(mask_img);
 			originalImage.saveImage(outFile);
+			cout << "Done!" << endl;
 			break;
 		}
 		if (s=="-t")
@@ -117,6 +118,7 @@ int main(int argc, char * argv[])
 			BRMALA003::Image threshImg(file_one);
 			threshImg*thresh_int;
 			threshImg.saveImage(outFile);
+			cout << "Done!" << endl;
 			break;
 		}
 		

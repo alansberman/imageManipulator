@@ -2,7 +2,6 @@
 //Author: Alan Berman
 //13/04/2015
 
-
 #include "Image.h"
 #include <memory>
 #include <string>
@@ -18,24 +17,22 @@ namespace BRMALA003
 	//Constructor
 	Image::Image(string filename)
 	{
-		constructImage(filename);
+		loadImage(filename);
 	}
 	//Image_ptr accessor	
 	unique_ptr<unsigned char[]>& Image::getImagePtr()
 	{
 		return image_ptr;
 	}
-	//Reads the PNG file and assigns image_ptr to it
-	void Image::constructImage(string filename)
+	//Reads in a PNG file and assigns image_ptr to it
+	void Image::loadImage(string inputFile)
 	{
 		string line = "";
 		char c;
-		ifstream img(filename.c_str(), ios::in|ios::binary);
-		
+		ifstream img(inputFile.c_str(), ios::in|ios::binary);		
 		while (!img.eof())
 		{
 			getline(img,line);
-			
 			c=line.at(0);
 			//Skip the 'P5' line
 			if (c=='P')
@@ -54,14 +51,11 @@ namespace BRMALA003
 			{
 				istringstream ss(line);
 				ss >> width >> ws >> height;
-				//cout << width << " " << height << endl;
 				continue;
 			}
 			//Find the '255' line and consume its whitespace
 			else if (c=='2')
 			{
-				//cout << line << endl;
-				//cout << "got 255" << endl;
 			    istringstream ss_255(line);
 			    ss_255 >> ws;
 			    break;
@@ -89,92 +83,13 @@ namespace BRMALA003
 		ofstream output;
 		output.open(outFile.c_str(), ios::out | ios::binary);
 		output << "P5" << endl;
-		output << "#" << endl;
+		output << "# Made a new image!" << endl;
 		output << width << " " << height << endl;
 		output << 255 << endl;
 		output.write((char *) image_ptr.get(),width*height);
 		output.close();
 	}
 	
-	//Add method of 2 images which makes all the pixels in image 2 equal to
-	//the sum of the first image's and the second image's pixel at that location
-	unique_ptr<unsigned char[]>& Image::addImages(string file1, string file2,string outFile) //////////////outfile
-	{
-		Image imageA = Image(file1);
-		Image imageB = Image(file2);
-		for (int i=0;i<(imageA.getWidth() * imageA.getHeight());++i)
-		{
-			imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] & imageB.getImagePtr().get()[i];
-		}
-		ofstream output;
-		output.open(outFile.c_str(), ios::out | ios::binary);
-		output << "P5" << endl;
-		output << "#" << endl;
-		output << imageB.getWidth() << " " << imageB.getHeight() << endl;
-		output << 255 << endl;
-		output.write((char *) imageB.getImagePtr().get(),width*height);
-		output.close();
-		return imageB.getImagePtr();
-	}
-	
-	//Sum method of 2 images which makes all the pixels in image 2 equal to
-	//the difference between the first image's and the second image's pixel at that location
-	unique_ptr<unsigned char[]>& Image::subtractImages(string file1, string file2)
-	{
-		Image imageA = Image(file1);
-		Image imageB = Image(file2);
-		for (int i=0;i<(imageA.getWidth() * imageA.getHeight());++i)
-		{
-			imageA.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] - imageB.getImagePtr().get()[i];
-		}
-		return imageA.getImagePtr();
-	}
-	//Inverts an image
-	unique_ptr<unsigned char[]>& Image::invertImage(string file1)
-	{
-		Image inverted = Image(file1);
-		for (int i=0;i<(inverted.getWidth() * inverted.getHeight());++i)
-		{
-			inverted.getImagePtr().get()[i] = 255 - inverted.getImagePtr().get()[i];
-		}
-		return inverted.getImagePtr();
-	}
-	//Masks an image
-	unique_ptr<unsigned char[]>& Image::maskImage(string file1, string file2)
-	{
-		Image imageA = Image(file1);
-		Image imageB = Image(file2);
-		for (int i=0;i<(imageA.getWidth() * imageA.getHeight());++i)
-		{
-			if (imageB.getImagePtr().get()[i] == 255)
-			{
-				imageA.getImagePtr().get()[i] = imageB.getImagePtr().get()[i];
-			}
-			else
-			{
-				imageA.getImagePtr().get()[i] = 0;
-			}
-		}
-		return imageA.getImagePtr();
-		
-	}
-	//Makes a threshold mask image
-	unique_ptr<unsigned char[]>& Image::threshImage(string file1, int threshold)
-	{
-		Image threshImage = Image(file1);
-		for (int i=0;i<(threshImage.getWidth() * threshImage.getHeight());++i)
-		{
-			if (threshImage.getImagePtr().get()[i] > threshold)
-			{
-				threshImage.getImagePtr().get()[i] = 255;
-			}
-			else
-			{
-				threshImage.getImagePtr().get()[i] = 0;
-			}
-		}
-		return threshImage.getImagePtr();
-	}
 	//Copy Constructor
 	Image::Image(const Image & rhs)
 	{
@@ -213,7 +128,9 @@ namespace BRMALA003
 		}
 		return *this;
 	}
-	
+	//Using two images, make all the pixels in the first image equal to
+	//the sum of the first image's and the second image's pixel
+	// at that location
 	Image & Image::operator+(Image && rhs)
 	{
 		 Image::iterator beg = this->begin(), end = this->end();
@@ -233,11 +150,12 @@ namespace BRMALA003
 				*beg = *beg + *inStart; 
 				++beg; ++inStart; 
 			 }
-			
-			  
 		 } 
 		 return *this;
 	}
+	//Using two images, make all the pixels in the first image equal to
+	//the difference between the first image's and the 
+	//second image's pixel at that location
 	Image & Image::operator-(Image && rhs)
 	{
 		 Image::iterator beg = this->begin(), end = this->end();
@@ -260,7 +178,7 @@ namespace BRMALA003
 		 } 
 		 return *this;
 	}
-	
+	//Invert the pixels of an image
 	Image & Image::operator!(void)
 	{
 		 Image::iterator beg = this->begin(), end = this->end();
@@ -272,8 +190,60 @@ namespace BRMALA003
 		 } 
 		 return *this;
 	}
+	//Using two images, copy all the pixels in the second image to
+	//the first image (if they're 255), else set all the first image's
+	//pixels to 0
+	Image & Image::operator/(Image && rhs)
+	{
+		 Image::iterator beg = this->begin(), end = this->end();
+		 Image::iterator inStart = rhs.begin(), inEnd = rhs.end();
+		 //Until the end of the unsigned char buffer is reached 
+		 while ( beg != end) 
+		 {
+			 //Only copy values from the second image if they're 255
+			 if (*inStart == 255)
+			 {
+				*beg = *inStart; 
+				++beg; ++inStart; 
+			 }
+			 //Else set the values to 0
+			 else
+			 {
+				*beg = 0; 
+				++beg; ++inStart; 
+			 }
+		 } 
+		 return *this;
+	}
+	//Using a threshold value, set all the pixels in an image
+	//bigger than the threshold to 255, else set them to 0
+	Image & Image::operator*(int thresh_value)
+	{
+		 Image::iterator beg = this->begin(), end = this->end();
+		 //Until the end of the unsigned char buffer is reached
+		 while ( beg != end) 
+		 {	
+			if (*beg > thresh_value)
+			{
+				*beg = 255; 
+				++beg; 
+			}
+			else
+			{ 		 
+				*beg = 0; 
+				++beg;
+			}			 		  
+		 } 
+		 return *this;
+	}
 	
+	Image & Image::operator<<(string outFile)
+	{
+		Image::saveImage(outFile);
+	}
 	
-	
-	
+	Image & Image::operator>>(string inputFile)
+	{
+		Image::loadImage(inputFile);
+	}
 }

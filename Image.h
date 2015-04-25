@@ -66,11 +66,6 @@ namespace BRMALA003
 			}
 			bool operator!=(iterator &rhs)
 			{
-				//if (this->ptr == rhs.ptr)
-				//{
-				//return true;
-				//}
-				//return false;
 				return this->ptr != rhs.ptr;
 			}
 			
@@ -86,14 +81,7 @@ namespace BRMALA003
 		int getWidth();
 		int getHeight();
 		void saveImage(string outFile);
-		void loadImage();
-		void constructImage(string filename);
-		unique_ptr<unsigned char[]>& addImages(string file1,string file2,string outFile);
-		unique_ptr<unsigned char[]>& subtractImages(string file1, string file2);
-		unique_ptr<unsigned char[]>& invertImage(string file1);
-		unique_ptr<unsigned char[]>& maskImage(string file1, string file2);
-		unique_ptr<unsigned char[]>& threshImage(string file1, int threshold);
-		
+		void loadImage(string inputFile);
 		//Copy Constructor
 		Image(const Image & rhs);
 		//Move Constructor
@@ -101,14 +89,15 @@ namespace BRMALA003
 		//Copy and Move Assignment Operators
 		Image & operator=(const Image & rhs); 
 		Image & operator=(Image && rhs);
-		//Operators
+		//Operator overloads
 		Image & operator+(Image && rhs);
 		Image & operator!(void);
 		Image & operator/(Image && rhs);
 		Image & operator-(Image && rhs);
-		Image & operator*(Image && rhs);
+		Image & operator*(int thresh_value);
+		Image & operator<<(string outFile);
+		Image & operator>>(string inputFile);
 		
 	};
 }
-
 #endif //IMAGE_H
