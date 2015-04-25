@@ -2,10 +2,12 @@
 //Author: Alan Berman
 //13/04/2015
 
-#include <memory>
+
 #include "Image.h"
+#include <memory>
 #include <string>
 #include <iostream>
+#include <ostream>
 #include <fstream>
 #include <sstream>
 //Creates a unique_ptr to a PNG image
@@ -14,11 +16,9 @@ namespace BRMALA003
 {
 	using namespace std;
 	//Constructor
-	Image::Image(string filename, int w, int h)
+	Image::Image(string filename)
 	{
-		width=w;
-		height=h;
-		constructImage(filename,w,h);
+		constructImage(filename);
 	}
 	//Image_ptr accessor	
 	unique_ptr<unsigned char[]>& Image::getImagePtr()
@@ -26,54 +26,121 @@ namespace BRMALA003
 		return image_ptr;
 	}
 	//Reads the PNG file and assigns image_ptr to it
-	void Image::constructImage(string filename, int rows, int columns)
+	void Image::constructImage(string filename)
 	{
+		string line = "";
+		char c;
 		ifstream img(filename.c_str(), ios::in|ios::binary);
-		unique_ptr<unsigned char[]> image(new unsigned char[rows*columns]); 
-		img.read((char *)image.get(), rows*columns);
+		
+		while (!img.eof())
+		{
+			getline(img,line);
+			
+			c=line.at(0);
+			//Skip the 'P5' line
+			if (c=='P')
+			{
+				//cout << line << endl;
+				continue;
+			}
+			//Skip comments
+			else if (c=='#')
+			{
+				//cout << line << endl;
+				continue;
+			}
+			//Find the line containing the number of rows and columns
+			else if (line.length() > 3)
+			{
+				cout << line << endl;
+				istringstream ss(line);
+				ss >> width >> ws >> height;
+				//cout << width << " " << height << endl;
+				continue;
+			}
+			//Find the '255' line and consume its whitespace
+			else if (c=='2')
+			{
+				//cout << line << endl;
+				//cout << "got 255" << endl;
+			    istringstream ss_255(line);
+			    ss_255 >> ws;
+			    cout << line << endl;
+			    break;
+			}
+		}
+		cout << "hello!" << endl;
+		unique_ptr<unsigned char[]> image(new unsigned char[width*height]); 
+		img.read((char *)image.get(), width*height);
 		image_ptr = move(image);
 	}
+	//Get width
+	int Image::getWidth()
+	{
+		return width;
+	}
+	
+	//Get height
+	int Image::getHeight()
+	{
+		return height;
+	}
+	
+	//Save image
+	void Image::saveImage(unique_ptr<unsigned char[]>& Image, string outFile)
+	{
+			
+	}
+	
 	//Add method of 2 images which makes all the pixels in image 2 equal to
 	//the sum of the first image's and the second image's pixel at that location
-	unique_ptr<unsigned char[]>& Image::addImages(string file1, int w1, int h1,string file2, int w2, int h2)
+	unique_ptr<unsigned char[]>& Image::addImages(string file1, string file2,string outFile) //////////////outfile
 	{
-		Image imageA = Image(file1,w1,h1);
-		Image imageB = Image(file2,w2,h2);
-		for (int i=0;i<(h1 * w1);++i)
+		Image imageA = Image(file1);
+		Image imageB = Image(file2);
+		for (int i=0;i<(imageA.getWidth() * imageA.getHeight());++i)
 		{
-			imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] + imageB.getImagePtr().get()[i];
+			imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] & imageB.getImagePtr().get()[i];
 		}
+		ofstream output;
+		output.open(outFile.c_str(), ios::out | ios::binary);
+		output << "P5" << endl;
+		output << "#" << endl;
+		output << imageB.getWidth() << " " << imageB.getHeight() << endl;
+		output << 255 << endl;
+		output.write((char *) imageB.getImagePtr().get(),width*height);
+		output.close();
 		return imageB.getImagePtr();
 	}
 	
 	//Sum method of 2 images which makes all the pixels in image 2 equal to
 	//the difference between the first image's and the second image's pixel at that location
-	unique_ptr<unsigned char[]>& Image::subtractImages(string file1, int w1, int h1,string file2, int w2, int h2)
+	unique_ptr<unsigned char[]>& Image::subtractImages(string file1, string file2)
 	{
-		Image imageA = Image(file1,w1,h1);
-		Image imageB = Image(file2,w2,h2);
-		for (int i=0;i<(h1 * w1);++i)
+		Image imageA = Image(file1);
+		Image imageB = Image(file2);
+		for (int i=0;i<(imageA.getWidth() * imageA.getHeight());++i)
 		{
 			imageA.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] - imageB.getImagePtr().get()[i];
 		}
 		return imageA.getImagePtr();
 	}
 	//Inverts an image
-	unique_ptr<unsigned char[]>& Image::invertImage(string file1, int w1, int h1)
+	unique_ptr<unsigned char[]>& Image::invertImage(string file1)
 	{
-		Image inverted = Image(file1,w1,h1);
-		for (int i=0;i<(h1 * w1);++i)
+		Image inverted = Image(file1);
+		for (int i=0;i<(inverted.getWidth() * inverted.getHeight());++i)
 		{
 			inverted.getImagePtr().get()[i] = 255 - inverted.getImagePtr().get()[i];
 		}
 		return inverted.getImagePtr();
 	}
 	//Masks an image
-	unique_ptr<unsigned char[]>& maskImage(string file1, int w1, int h1, string file2, int w2, int h2)
+	unique_ptr<unsigned char[]>& Image::maskImage(string file1, string file2)
 	{
-		Image imageA = Image(file1,w1,h1);
-		Image imageB = Image(file2,w2,h2);
-		for (int i=0;i<(h1 * w1);++i)
+		Image imageA = Image(file1);
+		Image imageB = Image(file2);
+		for (int i=0;i<(imageA.getWidth() * imageA.getHeight());++i)
 		{
 			if (imageB.getImagePtr().get()[i] == 255)
 			{
@@ -88,10 +155,10 @@ namespace BRMALA003
 		
 	}
 	//Makes a threshold mask image
-	unique_ptr<unsigned char[]>& threshImage(string file1, int w1, int h1, int threshold)
+	unique_ptr<unsigned char[]>& Image::threshImage(string file1, int threshold)
 	{
-		Image threshImage = Image(file1,w1,h1);
-		for (int i=0;i<(h1 * w1);++i)
+		Image threshImage = Image(file1);
+		for (int i=0;i<(threshImage.getWidth() * threshImage.getHeight());++i)
 		{
 			if (threshImage.getImagePtr().get()[i] > threshold)
 			{
