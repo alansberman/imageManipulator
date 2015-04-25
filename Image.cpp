@@ -87,7 +87,7 @@ namespace BRMALA003
 	}
 	
 	//Save image
-	void Image::saveImage(unique_ptr<unsigned char[]>& img, string outFile)
+	void Image::saveImage(string outFile)
 	{
 		ofstream output;
 		output.open(outFile.c_str(), ios::out | ios::binary);
@@ -95,7 +95,7 @@ namespace BRMALA003
 		output << "#" << endl;
 		output << width << " " << height << endl;
 		output << 255 << endl;
-		output.write((char *) img.get(),width*height);
+		output.write((char *) image_ptr.get(),width*height);
 		output.close();
 	}
 	
@@ -221,19 +221,20 @@ namespace BRMALA003
 	{
 		 Image::iterator beg = this->begin(), end = this->end();
 		 Image::iterator inStart = rhs.begin(), inEnd = rhs.end();
-
+		 cout << "Yo" << endl;
 		 while ( beg != end) 
 		 {
-			 //imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] & imageB.getImagePtr().get()[i];
-			 if (*beg == 255 || *inStart == 255)
+			 //Clamp the value to 255
+			 //so that it doesn't exceed the allowed range
+			 if (*inStart == 255)
 			 {
 				*beg = 255; 
-				++beg; ++inStart;
+				++beg; ++inStart; 
 			 }
 			 else
 			 {
 				*beg = *beg + *inStart; 
-				++beg; ++inStart;
+				++beg; ++inStart; 
 			 }
 			
 			  
@@ -247,7 +248,8 @@ namespace BRMALA003
 
 		 while ( beg != end) 
 		 {
-			 //imageB.getImagePtr().get()[i] = imageA.getImagePtr().get()[i] & imageB.getImagePtr().get()[i];
+			 //Clamp the value to 0
+			 //so that a negative value is not obtained
 			 if (*beg == 0 || *inStart == 0)
 			 {
 				*beg = 0; 

@@ -66,11 +66,12 @@ namespace BRMALA003
 			}
 			bool operator!=(iterator &rhs)
 			{
-				if (this->ptr == rhs.ptr)
-				{
-				return true;
-				}
-				return false;
+				//if (this->ptr == rhs.ptr)
+				//{
+				//return true;
+				//}
+				//return false;
+				return this->ptr != rhs.ptr;
 			}
 			
 		
@@ -84,7 +85,7 @@ namespace BRMALA003
 		unique_ptr<unsigned char[]>& getImagePtr();
 		int getWidth();
 		int getHeight();
-		void saveImage(unique_ptr<unsigned char[]>& Image, string outFile);
+		void saveImage(string outFile);
 		void loadImage();
 		void constructImage(string filename);
 		unique_ptr<unsigned char[]>& addImages(string file1,string file2,string outFile);

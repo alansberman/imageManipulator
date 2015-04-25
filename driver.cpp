@@ -11,7 +11,7 @@
 using namespace std;
 int main(int argc, char * argv[])
 {
-	string file_one,file_two;
+	string file_one,file_two, outFile;
 	//String used to parse args
 	string s;
 	int thresh_int;
@@ -28,11 +28,14 @@ int main(int argc, char * argv[])
 			i++;
 			//Extract the second file name from the args
 			file_two=string(argv[i]);
+			i++;
+			//Extract the output file name from the args
+			outFile=string(argv[i]);
 			//add
-			string a = "hello.pgm";
 			BRMALA003::Image originalImage(file_one);
 			BRMALA003::Image imageToAdd(file_two);
-			originalImage + imageToAdd;
+			originalImage + move(imageToAdd);
+			originalImage.saveImage(outFile);
 			break;
 		}
 		if (s=="-s")
@@ -43,9 +46,14 @@ int main(int argc, char * argv[])
 			i++;
 			//Extract the second file name from the args
 			file_two=string(argv[i]);
+			i++;
+			//Extract the output file name from the args
+			outFile=string(argv[i]);
 			//subtract
-			BRMALA003::Image subImage(file_one);
-			subImage.subtractImages(file_one, file_two);
+			BRMALA003::Image originalImage(file_one);
+			BRMALA003::Image imageToAdd(file_two);
+			originalImage - move(imageToAdd);
+			originalImage.saveImage(outFile);
 			break;
 		}
 		if (s=="-i")
@@ -53,6 +61,9 @@ int main(int argc, char * argv[])
 			i++;
 			//Extract the singular file name from the args
 			file_one=string(argv[i]);
+			i++;
+			//Extract the output file name from the args
+			outFile=string(argv[i]);
 			//invert
 			BRMALA003::Image inverted_img(file_one);
 			inverted_img.invertImage(file_one);
@@ -66,6 +77,9 @@ int main(int argc, char * argv[])
 			i++;
 			//Extract the second file name from the args
 			file_two=string(argv[i]);
+			i++;
+			//Extract the output file name from the args
+			outFile=string(argv[i]);
 			//mask
 			BRMALA003::Image mask(file_one);
 			mask.maskImage(file_one,file_two);
@@ -77,8 +91,13 @@ int main(int argc, char * argv[])
 			//Extract the singular file name from the args
 			file_one=string(argv[i]);
 			i++;
+			//Extract the threshold value from the args
+			//cast it to an integer
 			string thresh = string(argv[i]);
 			thresh_int=  atoi(thresh.c_str());
+			i++;
+			//Extract the output file name from the args
+			outFile=string(argv[i]);
 			//threshold
 			BRMALA003::Image threshImg(file_one);
 			threshImg.threshImage(file_one, thresh_int);
