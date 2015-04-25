@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
 	{
 		//Identify the option chosen
 		s = string(argv[i]);
-		cout << "loop start\n";
+		//cout << "loop start\n";
 		if 	(s=="-a")
 		{
 			i++;
@@ -30,8 +30,9 @@ int main(int argc, char * argv[])
 			file_two=string(argv[i]);
 			//add
 			string a = "hello.pgm";
-			BRMALA003::Image addImage(file_one);
-			addImage.addImages(file_one, file_two,a);
+			BRMALA003::Image originalImage(file_one);
+			BRMALA003::Image imageToAdd(file_two);
+			originalImage + imageToAdd;
 			break;
 		}
 		if (s=="-s")

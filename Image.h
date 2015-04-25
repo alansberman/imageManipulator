@@ -30,7 +30,7 @@ namespace BRMALA003
 			//copy construct is public
 			iterator( const iterator & rhs) : ptr(rhs.ptr) {}
 			// define overloaded ops: *, ++, --, =
-			iterator & operator=(const iterator & rhs)
+			iterator & operator=(iterator & rhs)
 			{
 				if(this != &rhs) 
 				{
@@ -38,7 +38,7 @@ namespace BRMALA003
 				}
 				return *this;
 			}
-			u_char & operator*(const iterator & rhs)
+			u_char & operator*(void)
 			{
 				return *ptr;
 			}
@@ -64,9 +64,9 @@ namespace BRMALA003
 				operator--();
 				return temp;
 			}
-			boolean & operator!=(const iterator &rhs)
+			bool operator!=(iterator &rhs)
 			{
-				if (this->ptr == rhs->ptr)
+				if (this->ptr == rhs.ptr)
 				{
 				return true;
 				}

@@ -87,9 +87,16 @@ namespace BRMALA003
 	}
 	
 	//Save image
-	void Image::saveImage(unique_ptr<unsigned char[]>& Image, string outFile)
+	void Image::saveImage(unique_ptr<unsigned char[]>& img, string outFile)
 	{
-			
+		ofstream output;
+		output.open(outFile.c_str(), ios::out | ios::binary);
+		output << "P5" << endl;
+		output << "#" << endl;
+		output << width << " " << height << endl;
+		output << 255 << endl;
+		output.write((char *) img.get(),width*height);
+		output.close();
 	}
 	
 	//Add method of 2 images which makes all the pixels in image 2 equal to
