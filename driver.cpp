@@ -7,7 +7,7 @@
 #include <string>
 #include <sstream>
 #include "Image.h"
-//Driver that performs a variety of operations on two PNG image files
+//Driver that performs a variety of operations on one/two PGM image files
 using namespace std;
 int main(int argc, char * argv[])
 {

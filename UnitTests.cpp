@@ -71,6 +71,7 @@ bool checkZeroBoundary(BRMALA003::Image& subbed)
 	return true; 
 		
 }
+
 //Check the masked image is not the same as the original
 TEST_CASE("Masked image M1","[]")
 {
@@ -115,13 +116,16 @@ TEST_CASE("Create a masked image","[]")
 	REQUIRE(to_mask.getWidth()==mask_with.getWidth());
 	REQUIRE(to_mask.getHeight()==mask_with.getHeight());	
 }
-//Check overloaded <<  operator
+//Check overloaded << and >>  operator
 //Should produce the image (write it to a file)
 TEST_CASE("Check I/O << operator","[]")
 {
-	BRMALA003::Image orig("shrek_rectangular.pgm");
+	BRMALA003::Image orig("");
+	orig>>"shrek_rectangular.pgm";
 	orig<<"shrek_copy";
 }
+
+
 //Add images
 //Check they have been clamped correctly
 //(no pixels with values >255)
@@ -130,6 +134,7 @@ TEST_CASE("Adding images and boundary checking","[]")
 	BRMALA003::Image img_a("shrek_rectangular.pgm");
 	BRMALA003::Image img_b("donkey_mask.pgm");
 	img_a+std::move(img_b);
+	img_a.saveImage("added.pgm");
 	REQUIRE(checkTwoFiveFiveBoundary(img_a)==true);		
 }
 //Subtract images
@@ -140,5 +145,17 @@ TEST_CASE("Subtracting images and boundary checking","[]")
 	BRMALA003::Image img_a("shrek_rectangular.pgm");
 	BRMALA003::Image img_b("donkey_mask.pgm");
 	img_a-std::move(img_b);
+	img_a.saveImage("subbed.pgm");
 	REQUIRE(checkZeroBoundary(img_a)==true);		
+}
+//Image move constructor test
+TEST_CASE("Image move constructor test","[]")
+{
+	BRMALA003::Image img_a("shrek_rectangular.pgm");
+	BRMALA003::Image img_a_moved=std::move(img_a);
+	BRMALA003::Image img_a_copy("shrek_rectangular.pgm");
+	REQUIRE(checkImagesEqual(img_a_moved,img_a_copy)==true);
+	//Check dimensions equal
+	REQUIRE(img_a_moved.getWidth()==img_a_copy.getWidth());
+	REQUIRE(img_a_copy.getHeight()==img_a_copy.getHeight());
 }

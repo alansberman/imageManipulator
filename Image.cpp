@@ -9,8 +9,10 @@
 #include <ostream>
 #include <fstream>
 #include <sstream>
-//Creates a unique_ptr to a PNG image
+//Creates a unique_ptr to a PGM image after reading in a PNG file
 //and supports various operations on the images
+//The operations are performed using operator overloads
+//The resulting image can be written to a PGM file
 namespace BRMALA003
 {
 	using namespace std;
@@ -27,6 +29,13 @@ namespace BRMALA003
 	//Reads in a PNG file and assigns image_ptr to it
 	void Image::loadImage(string inputFile)
 	{
+		//Special check used in order to run 
+		//the check of the >> operator
+		//(the >> check will give a proper file)
+		if (inputFile=="")
+		{
+			return;
+		}
 		string line = "";
 		char c;
 		ifstream img(inputFile.c_str(), ios::in|ios::binary);		
@@ -37,13 +46,11 @@ namespace BRMALA003
 			//Skip the 'P5' line
 			if (c=='P')
 			{
-				//cout << line << endl;
 				continue;
 			}
 			//Skip comments
 			else if (c=='#')
 			{
-				//cout << line << endl;
 				continue;
 			}
 			//Find the line containing the number of rows and columns
@@ -236,12 +243,14 @@ namespace BRMALA003
 		 } 
 		 return *this;
 	}
-	
+	//Overloaded << operator
+	//Writes an image out to a file
 	Image & Image::operator<<(string outFile)
 	{
 		Image::saveImage(outFile);
 	}
-	
+	//Overloaded >> operator
+	//Reads in a PNG file
 	Image & Image::operator>>(string inputFile)
 	{
 		Image::loadImage(inputFile);

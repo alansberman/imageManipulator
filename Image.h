@@ -7,6 +7,7 @@
 #include <memory>
 
 //Header file that includes the Image class declaration
+//and the iterator class declaration
 namespace BRMALA003
 {
 	using namespace std;
@@ -15,7 +16,7 @@ namespace BRMALA003
 		private:
 		int width, height;
 		unique_ptr<unsigned char[]> image_ptr;
-		
+		//Adapted from framework given in assignment brief
 		public:
 		class iterator
 		{
@@ -71,16 +72,20 @@ namespace BRMALA003
 			
 		
 		};
-		//begin
+		//begin()
 		iterator begin(void) { return iterator(image_ptr.get());}
-		//end
+		//end()
 		iterator end(void) { return iterator(image_ptr.get()+(width*height));}
+		//Constructor
 		Image(string filename);
 		~Image() = default;
+		//Return a reference to image_ptr
 		unique_ptr<unsigned char[]>& getImagePtr();
 		int getWidth();
 		int getHeight();
+		//Write the image to outFile
 		void saveImage(string outFile);
+		//Read in the PGM inputFile
 		void loadImage(string inputFile);
 		//Copy Constructor
 		Image(const Image & rhs);
