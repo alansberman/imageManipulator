@@ -52,6 +52,25 @@ bool checkTwoFiveFiveBoundary (BRMALA003::Image& added)
 	return true; 
 		
 }
+//Check subtracted image doesn't contain pixels with values <0
+bool checkZeroBoundary(BRMALA003::Image& subbed)
+{
+	BRMALA003::Image::iterator subbed_beg = subbed.begin(), subbed_end = subbed.end();
+	while ( subbed_beg != subbed_end) 
+	{
+		//Check the value isn't >255
+		if (*subbed_beg> 255 )
+		{
+			return false; 
+		}
+		else
+		{
+			++subbed_beg; 
+	    }
+	}
+	return true; 
+		
+}
 //Check the masked image is not the same as the original
 TEST_CASE("Masked image M1","[]")
 {
@@ -105,10 +124,21 @@ TEST_CASE("Check I/O << operator","[]")
 }
 //Add images
 //Check they have been clamped correctly
+//(no pixels with values >255)
 TEST_CASE("Adding images and boundary checking","[]")
 {
 	BRMALA003::Image img_a("shrek_rectangular.pgm");
 	BRMALA003::Image img_b("donkey_mask.pgm");
 	img_a+std::move(img_b);
 	REQUIRE(checkTwoFiveFiveBoundary(img_a)==true);		
+}
+//Subtract images
+//Check they have been clamped correctly
+//(no pixels with values <0)
+TEST_CASE("Subtracting images and boundary checking","[]")
+{
+	BRMALA003::Image img_a("shrek_rectangular.pgm");
+	BRMALA003::Image img_b("donkey_mask.pgm");
+	img_a-std::move(img_b);
+	REQUIRE(checkZeroBoundary(img_a)==true);		
 }
