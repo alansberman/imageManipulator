@@ -140,7 +140,7 @@ namespace BRMALA003
 		 {
 			 //Clamp the value to 255
 			 //so that it doesn't exceed the allowed range
-			 if (*inStart == 255)
+			 if (*inStart == 255 || *beg==255)
 			 {
 				*beg = 255; 
 				++beg; ++inStart; 
